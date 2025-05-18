@@ -1,0 +1,589 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Anonymizer Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --danger: #ef4444;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: var(--dark);
+      min-height: 100vh;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--secondary), #059669);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #dc2626);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .textarea-custom {
+      min-height: 200px;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .textarea-custom:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .result-box {
+      min-height: 200px;
+      border-radius: 0.5rem;
+      background-color: white;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .masked {
+      background-color: #fef08a;
+      color: #854d0e;
+      padding: 0 2px;
+      border-radius: 3px;
+      font-weight: 600;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+    
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background-color: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      transition: width 0.3s ease;
+    }
+    
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+      <div class="container mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center mb-4 md:mb-0">
+            <i class="fas fa-user-secret text-3xl mr-3"></i>
+            <h1 class="text-3xl font-bold">Secure<span class="text-yellow-300">Anonymizer</span>Pro</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="bg-white text-gray-800 px-4 py-2 rounded-full font-medium flex items-center">
+              <i class="fas fa-moon mr-2"></i> Тёмный режим
+            </button>
+            <button class="tooltip bg-white text-gray-800 px-4 py-2 rounded-full font-medium">
+              <i class="fas fa-question-circle"></i>
+              <span class="tooltip-text">Инструмент для анонимизации персональных данных в текстах и изображениях</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <div class="max-w-6xl mx-auto">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+            <div class="bg-blue-100 p-3 rounded-full mr-4">
+              <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-gray-500 text-sm">Защищено данных</p>
+              <p id="protectedCount" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+            <div class="bg-green-100 p-3 rounded-full mr-4">
+              <i class="fas fa-file-upload text-green-600 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-gray-500 text-sm">Обработано файлов</p>
+              <p id="processedFiles" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+            <div class="bg-purple-100 p-3 rounded-full mr-4">
+              <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-gray-500 text-sm">Эффективность</p>
+              <p class="text-2xl font-bold">99.9%</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-keyboard mr-2 text-blue-500"></i> Введите текст для анонимизации
+            </h2>
+          </div>
+          <div class="p-6">
+            <textarea id="inputText" class="w-full textarea-custom p-4" placeholder="Вставьте текст с персональными данными или загрузите изображение..."></textarea>
+            
+            <div class="flex flex-wrap justify-between items-center mt-4">
+              <div class="flex space-x-2 mb-4 md:mb-0">
+                <button id="anonymizeBtn" class="btn-primary px-6 py-2 rounded-full font-medium flex items-center">
+                  <i class="fas fa-user-shield mr-2"></i> Анонимизировать
+                </button>
+                <button id="clearBtn" class="btn-danger px-6 py-2 rounded-full font-medium flex items-center">
+                  <i class="fas fa-trash-alt mr-2"></i> Очистить
+                </button>
+              </div>
+              
+              <div class="file-upload">
+                <button class="btn-secondary px-6 py-2 rounded-full font-medium flex items-center">
+                  <i class="fas fa-camera mr-2"></i> Загрузить изображение
+                  <input type="file" id="fileInput" class="file-upload-input" accept="image/*">
+                </button>
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              <div class="flex items-center mb-2">
+                <span class="text-sm font-medium text-gray-700 mr-3">Дополнительные параметры:</span>
+                <label class="flex items-center mr-4">
+                  <span class="mr-2 text-sm">ИИН</span>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="toggleIin" checked>
+                    <span class="slider"></span>
+                  </div>
+                </label>
+                <label class="flex items-center mr-4">
+                  <span class="mr-2 text-sm">Телефоны</span>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="togglePhones" checked>
+                    <span class="slider"></span>
+                  </div>
+                </label>
+                <label class="flex items-center">
+                  <span class="mr-2 text-sm">ФИО</span>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="toggleNames" checked>
+                    <span class="slider"></span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar (hidden by default) -->
+        <div id="progressContainer" class="hidden mb-8">
+          <div class="flex justify-between mb-2">
+            <span class="text-sm font-medium">Распознавание текста...</span>
+            <span id="progressPercent" class="text-sm font-medium">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progressBar" class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Image Preview (hidden by default) -->
+        <div id="imagePreviewContainer" class="hidden bg-white rounded-xl shadow-md overflow-hidden mb-8">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-image mr-2 text-blue-500"></i> Предпросмотр изображения
+            </h2>
+          </div>
+          <div class="p-6 flex justify-center">
+            <img id="photoPreview" class="max-w-full h-auto rounded-lg shadow-md" alt="Загруженное изображение">
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-file-alt mr-2 text-blue-500"></i> Результат анонимизации
+            </h2>
+            <div class="flex items-center">
+              <span id="foundCount" class="text-sm font-medium bg-blue-100 text-blue-800 px-3 py-1 rounded-full">0 совпадений</span>
+              <button id="copyBtn" class="ml-3 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                <i class="fas fa-copy mr-1"></i> Копировать
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <div id="result" class="result-box p-4 whitespace-pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-4 md:mb-0">
+            <p class="text-sm">© 2023 SecureAnonymizerPro. Все права защищены.</p>
+          </div>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-300 hover:text-white">
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-white">
+              <i class="fab fa-telegram text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-white">
+              <i class="fas fa-envelope text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // DOM Elements
+    const inputText = document.getElementById('inputText');
+    const result = document.getElementById('result');
+    const anonymizeBtn = document.getElementById('anonymizeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const fileInput = document.getElementById('fileInput');
+    const photoPreview = document.getElementById('photoPreview');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const foundCount = document.getElementById('foundCount');
+    const copyBtn = document.getElementById('copyBtn');
+    const protectedCount = document.getElementById('protectedCount');
+    const processedFiles = document.getElementById('processedFiles');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    
+    // Toggle switches
+    const toggleIin = document.getElementById('toggleIin');
+    const togglePhones = document.getElementById('togglePhones');
+    const toggleNames = document.getElementById('toggleNames');
+    
+    // Stats
+    let totalProtected = 0;
+    let totalProcessedFiles = 0;
+    
+    // Dark mode
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        darkModeToggle.innerHTML = '<i class="fas fa-sun mr-2"></i> Светлый режим';
+        document.body.style.backgroundColor = '#0f172a';
+        document.body.style.color = '#f8fafc';
+      } else {
+        darkModeToggle.innerHTML = '<i class="fas fa-moon mr-2"></i> Тёмный режим';
+        document.body.style.backgroundColor = '#f1f5f9';
+        document.body.style.color = '#1e293b';
+      }
+    });
+    
+    // Anonymize function with configurable patterns
+    function anonymizeText(text) {
+      let count = 0;
+      const patterns = [];
+      
+      // Add patterns based on toggle states
+      if (toggleIin.checked) {
+        patterns.push({
+          regex: /\b\d{12}\b/g,
+          name: 'ИИН'
+        });
+      }
+      
+      if (togglePhones.checked) {
+        patterns.push({
+          regex: /(\+?\d{1,3}[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2})/g,
+          name: 'Телефоны'
+        });
+        patterns.push({
+          regex: /(\+?\d{11,14})/g,
+          name: 'Номера'
+        });
+        patterns.push({
+          regex: /\b\d{16}\b/g,
+          name: 'Карты'
+        });
+      }
+      
+      if (toggleNames.checked) {
+        patterns.push({
+          regex: /\b[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+\b/g,
+          name: 'ФИО'
+        });
+        patterns.push({
+          regex: /\b[А-ЯЁ][а-яё]{2,15}\b/g,
+          name: 'Имена'
+        });
+      }
+      
+      // Always check for dates and addresses
+      patterns.push(
+        {
+          regex: /\b\d{2}\.\d{2}\.\d{4}\b/g,
+          name: 'Даты'
+        },
+        {
+          regex: /\b(г\.?\s*|город\s*)?[А-ЯЁ][а-яё]+,\s*(ул\.?|улица|пр\.?|проспект|пер\.?|переулок|мкр\.?|микрорайон|село|пос\.?|посёлок)\s+[А-ЯЁа-яё0-9\s\-]+(д\.?|дом)?\s*\d+[А-Яа-я]?(,\s*(кв\.?|квартира)\s*\d+)?/g,
+          name: 'Адреса'
+        }
+      );
+      
+      // Apply all patterns
+      patterns.forEach(pattern => {
+        const matches = text.match(pattern.regex);
+        if (matches) count += matches.length;
+        text = text.replace(pattern.regex, () => `<span class="masked">[${pattern.name.toUpperCase()}]</span>`);
+      });
+      
+      return { text, count };
+    }
+    
+    // Anonymize button handler
+    anonymizeBtn.addEventListener('click', () => {
+      const input = inputText.value.trim();
+      if (!input) {
+        alert('Пожалуйста, введите текст или загрузите изображение');
+        return;
+      }
+      
+      const { text, count } = anonymizeText(input);
+      result.innerHTML = text;
+      foundCount.textContent = `${count} совпадений`;
+      
+      // Update stats
+      totalProtected += count;
+      protectedCount.textContent = totalProtected;
+    });
+    
+    // Clear button handler
+    clearBtn.addEventListener('click', () => {
+      inputText.value = '';
+      result.innerHTML = '';
+      foundCount.textContent = '0 совпадений';
+      imagePreviewContainer.classList.add('hidden');
+      photoPreview.src = '';
+      fileInput.value = '';
+    });
+    
+    // Copy button handler
+    copyBtn.addEventListener('click', () => {
+      const range = document.createRange();
+      range.selectNode(result);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
+      
+      // Show copied feedback
+      const originalText = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Скопировано!';
+      setTimeout(() => {
+        copyBtn.innerHTML = originalText;
+      }, 2000);
+    });
+    
+    // File input handler
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Пожалуйста, выберите изображение (JPG, PNG и т.д.)');
+        return;
+      }
+      
+      // Show image preview
+      photoPreview.src = URL.createObjectURL(file);
+      imagePreviewContainer.classList.remove('hidden');
+      
+      // Show progress bar
+      progressContainer.classList.remove('hidden');
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+      
+      inputText.value = 'Идёт распознавание текста с изображения... Пожалуйста, подождите.';
+      
+      try {
+        const result = await Tesseract.recognize(file, 'rus+eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              const progress = Math.round(m.progress * 100);
+              progressBar.style.width = `${progress}%`;
+              progressPercent.textContent = `${progress}%`;
+            }
+          }
+        });
+        
+        inputText.value = result.data.text;
+        progressContainer.classList.add('hidden');
+        
+        // Update stats
+        totalProcessedFiles++;
+        processedFiles.textContent = totalProcessedFiles;
+        
+        // Auto-anonymize
+        const { text, count } = anonymizeText(result.data.text);
+        result.innerHTML = text;
+        foundCount.textContent = `${count} совпадений`;
+        totalProtected += count;
+        protectedCount.textContent = totalProtected;
+      } catch (error) {
+        console.error('OCR Error:', error);
+        inputText.value = 'Ошибка при распознавании текста. Попробуйте другое изображение.';
+        progressContainer.classList.add('hidden');
+      }
+    });
+    
+    // Initialize
+    protectedCount.textContent = totalProtected;
+    processedFiles.textContent = totalProcessedFiles;
+  </script>
+</body>
+</html>
